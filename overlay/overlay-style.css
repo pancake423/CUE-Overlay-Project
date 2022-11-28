@@ -1,0 +1,101 @@
+:root {
+	/* top bar variables */
+	--timer-bg-color: #111;
+	--timer-text-color: white;
+	--timer-font-size: 4rem;
+
+	--name-bg-color: #333;
+	--name-text-color: white;
+	--name-font-size: 3rem;
+
+	--top-bar-height: 10vh;
+
+	--t1-color: #f00;
+	--t2-color: #00f;
+	--score-text-color: white;
+	--score-font-size: 4rem;
+
+	/*top sub-bar variables*/
+	--sub-bar-height: 5vh;
+	--sub-bar-bg-color: #222;
+	--sub-bar-text-color: white;
+	--sub-bar-font-size: 2rem;
+
+	--ticker-bg-color: #555;
+	--ticker-empty-color: #111;
+}
+
+body {
+	margin: 0;
+	background-color: black;
+}
+p {
+	margin: 0;
+	text-align: center;
+	line-height: 1;
+}
+
+#ingame-top-bar {
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+	height: var(--top-bar-height);
+}
+#ingame-top-subbar {
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+	height: var(--sub-bar-height);
+}
+#timer-div {
+	height: var(--top-bar-height);
+	width: calc(var(--top-bar-height) * 2);
+	background-color: var(--timer-bg-color);
+}
+#t1score-div {
+	background-color: var(--t1-color);
+}
+#t2score-div {
+	background-color: var(--t2-color);
+}
+#timer {
+	color: var(--timer-text-color);
+	margin-top: calc((var(--top-bar-height) - var(--timer-font-size)) / 2);
+	font-size: var(--timer-font-size);
+}
+#current-game-info-div {
+	height: var(--sub-bar-height);
+	width: calc(var(--top-bar-height) * 3);
+	background-color: var(--sub-bar-bg-color);
+}
+#current-game-info {
+	color: var(--sub-bar-text-color);
+	margin-top: calc((var(--sub-bar-height) - var(--sub-bar-font-size)) / 2);
+	font-size: var(--sub-bar-font-size);
+}
+
+.name-div {
+	background-color: var(--name-bg-color);
+	width: 20vw;
+	height: 100%;
+}
+.score-div {
+	height: var(--top-bar-height);
+	width: var(--top-bar-height);
+}
+
+.name {
+	color: var(--name-text-color);
+	margin-top: calc((var(--top-bar-height) - var(--name-font-size)) / 2);
+	font-size: var(--name-font-size);
+}
+.score {
+	color: var(--score-text-color);
+	margin-top: calc((var(--top-bar-height) - var(--score-font-size)) / 2);
+	font-size: var(--score-font-size);
+}
+.ticker-container {
+	width: 20vw;
+	height: calc(var(--sub-bar-height) * 0.667);
+	background-color: var(--ticker-bg-color);
+}
