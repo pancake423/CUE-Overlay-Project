@@ -8,7 +8,7 @@
 	--name-text-color: white;
 	--name-font-size: 3rem;
 
-	--top-bar-height: 10vh;
+	--top-bar-height: 7vh;
 
 	--t1-color: #f00;
 	--t2-color: #00f;
@@ -19,10 +19,34 @@
 	--sub-bar-height: 5vh;
 	--sub-bar-bg-color: #222;
 	--sub-bar-text-color: white;
-	--sub-bar-font-size: 2rem;
+	--sub-bar-font-size: 1.5rem;
 
 	--ticker-bg-color: #555;
 	--ticker-empty-color: #111;
+
+	/*team boost meter variables*/
+	--bm-width: 10vw;
+	--bm-height: 20vh;
+	--bm-bg-color: #111;
+	--bm-text-color: white;
+	--bm-font-size: 2rem;
+	--bm-top-offset: 5vh;
+
+	/*Bottom info bar variables*/
+	--bb-width: 50vw;
+	--bb-height: 5vh;
+	--bb-bg-color: #111;
+	--bb-text-color: white;
+	--bb-font-size: 2rem;
+
+	/*spectated player info variables*/
+	--info-width: 10vw;
+	--info-height: 30vh;
+	--info-bg-color: #111;
+	--label-font-size: 1.5rem;
+	--label-font-color: #555;
+	--data-font-size: 2rem;
+	--data-font-color: white;
 }
 
 body {
@@ -73,7 +97,57 @@ p {
 	margin-top: calc((var(--sub-bar-height) - var(--sub-bar-font-size)) / 2);
 	font-size: var(--sub-bar-font-size);
 }
-
+#t1-boost-div {
+	left: 0;
+}
+#t2-boost-div {
+	right: 0;
+}
+#ingame-bottom-bar {
+	position: absolute;
+	bottom: 0;
+	width: var(--bb-width);
+	height: var(--bb-height);
+	left: calc((100vw - var(--bb-width)) / 2);
+	background-color: var(--bb-bg-color);
+}
+#bottom-bar-content {
+	margin-top: calc((var(--bb-height) - var(--bb-font-size)) / 2);
+	font-size: var(--bb-font-size);
+	color: var(--bb-text-color);
+}
+#spectated-player-info {
+	width: var(--info-width);
+	height: var(--info-height);
+	background-color: var(--info-bg-color);
+	position: absolute;
+	left: 5vh;
+	bottom: 5vh;
+	padding: 1em;
+}
+#player-stats-table {
+	width: 100%;
+	height: 80%;
+	margin-top: 1em;
+}
+.info-label {
+	color: var(--label-font-color);
+	font-size: var(--label-font-size);
+}
+.info-data {
+	color: var(--data-font-color);
+	font-size: var(--data-font-size);
+}
+.boost-div {
+	background-color: var(--bm-bg-color);
+	width: var(--bm-width);
+	height: var(--bm-height);
+	position: absolute;
+	top: var(--bm-top-offset);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
 .name-div {
 	background-color: var(--name-bg-color);
 	width: 20vw;
