@@ -34,28 +34,33 @@
 		<table id="player-stats-table">
 			<tr>
 				<td class="info-label">score:</td>
-				<td class="info-data">0</td>
+				<td class="info-data" id="spectated-player-score">0</td>
 			</tr>
 			<tr>
 				<td class="info-label">goals:</td>
-				<td class="info-data">0</td>
+				<td class="info-data" id="spectated-player-goals">0</td>
 			</tr>
 			<tr>
 				<td class="info-label">shots:</td>
-				<td class="info-data">0</td>
+				<td class="info-data" id="spectated-player-shots">0</td>
 			</tr>
 			<tr>
 				<td class="info-label">assists:</td>
-				<td class="info-data">0</td>
+				<td class="info-data" id="spectated-player-assists">0</td>
 			</tr>
 			<tr>
 				<td class="info-label">saves:</td>
-				<td class="info-data">0</td>
+				<td class="info-data" id="spectated-player-saves">0</td>
 			</tr>
 		</table>
 	</div>
 	<div id="spectated-boost-meter">
-		
+		<div id="boost-top-ticker"></div>
+		<div id="boost-right-ticker"></div>
+		<div id="boost-bottom-ticker"></div>
+		<div id="boost-left-ticker"></div>
+		<canvas id="boost-amount-display"></canvas>
+		<p id ="boost-amount">0</p>
 	</div>
 	<div id="ingame-bottom-bar">
 		<p id="bottom-bar-content">ECAC Playoffs | Round 2</p>
