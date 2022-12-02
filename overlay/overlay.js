@@ -4,7 +4,9 @@
 //global variables for HTML elements that can be modified while the overlay is running.
 //all of these variables (or properties) are bound to their respective HTML element when the program runs.
 /*exceptions:   INFO.series_length holds the numerical value of series length.
+				INFO.games_played tracks the number of games started.
 				INFO.spectating is a boolean for whether or not a player is being spectated.
+				INFO.overlay_shown is a boolean for whether or not the main overlay should be showing.
 				SPEC_PLAYER.team is an int with 1 representing team 1 and 2 representing team 2.
 */
 var TIMER = "";
@@ -27,7 +29,9 @@ var INFO = {
 	game_desc: "",
 	match_desc: "",
 	series_length: 3,
+	games_played: 0,
 	spectating: true,
+	overlay_shown: true,
 }
 
 var SPEC_PLAYER = {
@@ -65,7 +69,7 @@ function init() {
 	TEAM_2.boost_meters = document.getElementById("t2-boost-div");
 
 
-	INFO.game_desc = document.getElementById("current-game-info-div");
+	INFO.game_desc = document.getElementById("current-game-info");
 	INFO.match_desc = document.getElementById("bottom-bar-content");
 
 	SPEC_PLAYER.name = document.getElementById("spectated-player-name");
@@ -90,6 +94,7 @@ function update(updateParameters) {
 
 	updates the values of any specified overlay elements. the following object property names correspond to overlay elements:
 	{
+		timer, //string, current clock time.
 		t1name, //string, name of team 1.
 		t2name, //string, name of team 2
 		t1score, //string or int, number of goals that team 1 has.
@@ -110,6 +115,7 @@ function update(updateParameters) {
 		specboost, //int, boost amount 0-100 of currently spectated player.
 		specshow, //boolean, true if spectated player info should be shown.
 		specteam, //int, 1 for team 1 (orange) and 2 for team 2 (blue)
+		gamestarted //boolean, always true, event fired when a game starts.
 	}
 	*/
 	function check(propertyName) {
@@ -119,6 +125,7 @@ function update(updateParameters) {
 		parameterUpdateFunctions[propertyName]();
 	}
 	const parameterUpdateFunctions = {
+		'timer': function() {TIMER.innerHTML = updateParameters['timer']},
 		't1name': function() {TEAM_1.name.innerHTML = updateParameters['t1name']},
 		't2name': function() {TEAM_2.name.innerHTML = updateParameters['t1name']}, 
 		't1score': function() {TEAM_1.score.innerHTML = updateParameters['t1score']},
@@ -156,9 +163,11 @@ function update(updateParameters) {
 			SPEC_PLAYER.boost.innerHTML = updateParameters['specboost'];
 			drawBoostMeter(parseInt(updateParameters['specboost']),SPEC_PLAYER.team);
 		},
-		'specteam': function() {SPEC_PLAYER.team = updateParameters['specteam']}
+		'specteam': function() {SPEC_PLAYER.team = updateParameters['specteam']},
+		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + INFO.games_played + " | Best of " + INFO.series_length;}
 	};
 	const parameters = [
+		'timer',
 		't1name',
 		't2name', 
 		't1score',
@@ -178,7 +187,8 @@ function update(updateParameters) {
 		'specshots',
 		'specboost',
 		'specshow',
-		'specteam'
+		'specteam',
+		'gamestarted'
 	];
 	for (let i = 0; i < parameters.length; i++) {
 		check(parameters[i]);
@@ -301,6 +311,7 @@ function drawTeam2Tickers(ts, ss) {
 		ctx.stroke();
 	}
 }
+
 
 //runs on page load
 window.onload = init;
