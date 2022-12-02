@@ -4,7 +4,7 @@
 //global variables for HTML elements that can be modified while the overlay is running.
 //all of these variables (or properties) are bound to their respective HTML element when the program runs.
 /*exceptions:   INFO.series_length holds the numerical value of series length.
-				INFO.games_played tracks the number of games started.
+				INFO.t1_games_won and INFO.t2_games_won tracks the number of games won by each team.
 				INFO.spectating is a boolean for whether or not a player is being spectated.
 				INFO.overlay_shown is a boolean for whether or not the main overlay should be showing.
 				SPEC_PLAYER.team is an int with 1 representing team 1 and 2 representing team 2.
@@ -29,9 +29,10 @@ var INFO = {
 	game_desc: "",
 	match_desc: "",
 	series_length: 3,
-	games_played: 0,
+	t1_games_won: 0,
+	t2_games_won: 0,
 	spectating: true,
-	overlay_shown: true,
+	overlay_shown: false,
 }
 
 var SPEC_PLAYER = {
@@ -47,6 +48,8 @@ var SPEC_PLAYER = {
 var boostCanvas;
 var TEAM_1_COLOR;
 var TEAM_2_COLOR;
+
+var socket;
 
 
 //utility functions
@@ -87,6 +90,9 @@ function init() {
 	boostCanvas.lineJoin = "round";
 	TEAM_1_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--t1-color');
 	TEAM_2_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--t2-color');
+
+	UPDATE_OVERLAY();
+	initWebSocket();
 }
 function update(updateParameters) {
 	/*
@@ -115,6 +121,7 @@ function update(updateParameters) {
 		specboost, //int, boost amount 0-100 of currently spectated player.
 		specshow, //boolean, true if spectated player info should be shown.
 		specteam, //int, 1 for team 1 (orange) and 2 for team 2 (blue)
+		specname //string, name of spectated player.
 		gamestarted //boolean, always true, event fired when a game starts.
 	}
 	*/
@@ -163,8 +170,10 @@ function update(updateParameters) {
 			SPEC_PLAYER.boost.innerHTML = updateParameters['specboost'];
 			drawBoostMeter(parseInt(updateParameters['specboost']),SPEC_PLAYER.team);
 		},
+		'specshow': function() {INFO.spectating = updateParameters['specshow']},
 		'specteam': function() {SPEC_PLAYER.team = updateParameters['specteam']},
-		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + INFO.games_played + " | Best of " + INFO.series_length;}
+		'specname': function() {SPEC_PLAYER.name.innerHTML = updateParameters['specname']},
+		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + (INFO.t1_games_won + INFO.t2_games_won + 1) + " | Best of " + INFO.series_length;}
 	};
 	const parameters = [
 		'timer',
@@ -188,6 +197,7 @@ function update(updateParameters) {
 		'specboost',
 		'specshow',
 		'specteam',
+		'specname',
 		'gamestarted'
 	];
 	for (let i = 0; i < parameters.length; i++) {
@@ -309,6 +319,100 @@ function drawTeam2Tickers(ts, ss) {
 		ctx.moveTo(cw / length * (i + 0.25), ch / 2);
 		ctx.lineTo(cw / length * (i + 0.75), ch / 2);
 		ctx.stroke();
+	}
+}
+/*
+		timer, //string, current clock time.
+		t1name, //string, name of team 1.
+		t2name, //string, name of team 2
+		t1score, //string or int, number of goals that team 1 has.
+		t2score, //string or int, number of goals that team 2 has.
+		t1ss, //int, team 1 series score.
+		t2ss, //int, team 2 series score
+		numplayers, //int, number of players on each team.
+		serieslength, //int, maximum length of series in games (ie. best of 7)
+		t1boostamts, //list of ints 0-100. each entry corresponds to one player's current boost amount. (for team 1)
+		t2boostamts, //list of ints 0-100. each entry corresponds to one player's current boost amount. (for team 2)
+		t1names, //list of strings. each entry corresponds to one player's name on team 1.
+		t2names, //list of strings. each entry corresponds to one player's name on team 2.
+		specscore, //int, score of the currently spectated player.
+		specgoals, //int, number of goals of the current spectated player.
+		specsaves, //int, number of saves of currently spectated player.
+		specassists, //int, number of assists of currently spectated player
+		specshots, //int, number of shots of currently spectated player.
+		specboost, //int, boost amount 0-100 of currently spectated player.
+		specshow, //boolean, true if spectated player info should be shown.
+		specteam, //int, 1 for team 1 (orange) and 2 for team 2 (blue)
+		gamestarted //boolean, always true, event fired when a game starts.*/
+function initWebSocket() {
+	socket = new WebSocket("ws://localhost:49122");
+	socket.onmessage = function(e) {
+		const msg = JSON.parse(e.data);
+		switch (msg.event) {
+		case "game:update_state":
+			if(msg.data.game.hasTarget) {
+				const targetedPlayer = msg.data.players[msg.data.game.target];
+				update({
+					specscore: targetedPlayer.score,
+					specgoals: targetedPlayer.goals,
+					specshots: targetedPlayer.shots,
+					specassists: targetedPlayer.assists,
+					specsaves: targetedPlayer.saves,
+					specboost: targetedPlayer.boost,
+					specteam: targetedPlayer.team + 1,
+					specname: targetedPlayer.name
+				});
+			}
+			var t1playernames = [];
+			var t2playernames = [];
+			var t1playerboosts = [];
+			var t2playerboosts = [];
+			var numplayers = 0;
+			for (const [pid, data] of Object.entries(msg.data.players)) {
+  				if (data.team === 0) {
+  					t1playernames.push(data.name);
+  					t1playerboosts.push(data.boost);
+  				} else {
+  					t2playernames.push(data.name);
+  					t2playerboosts.push(data.boost);
+  				}
+  				numplayers++;
+			}
+			update({
+				timer: (msg.data.game.isOT ? "+": "") + Math.floor(msg.data.game.time_seconds / 60) + ":" + (msg.data.game.time_seconds % 60 < 10 ? ("0" + msg.data.game.time_seconds % 60) : msg.data.game.time_seconds % 60),
+				specshow: msg.data.game.hasTarget,
+				t1score: msg.data.game.teams[0].score,
+				t2score: msg.data.game.teams[1].score,
+				t1names: t1playernames,
+				t2names: t2playernames,
+				t1boostamts: t1playerboosts,
+				t2boostamts: t2playerboosts,
+				numplayers: numplayers / 2
+			});
+			break;
+		case "game:match_ended":
+			if(msg.data.winner_team_num === 0) {
+				//team 1 wins
+				INFO.t1_games_won++;
+			} else {
+				//team 2 wins
+				INFO.t2_games_won++;
+			}
+			update ({
+				t1ss: INFO.t1_games_won,
+				t2ss: INFO.t2_games_won,
+
+			});
+			break;
+		case "game:round_started_go":
+			update({
+				gamestarted: true, 
+				t1ss: INFO.t1_games_won,
+				t2ss: INFO.t2_games_won,
+			});
+			INFO.overlay_shown = true;
+			break;
+		}
 	}
 }
 
