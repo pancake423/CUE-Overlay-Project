@@ -1,12 +1,12 @@
 Overlay Elements:
-Timer
-Team 1 name and score
-Team 2 name and score
-series score tickers
-Additional information (best of X, game X, current league and match)
+Timer ✓
+Team 1 name and score ✓
+Team 2 name and score ✓
+series score tickers ✓
+Additional information (best of X, game X, current league and match) ✓
 
-Player lists for each team (and boost meters)
-player scores for the current spectated player
+Player lists for each team (and boost meters) ✓
+player scores for the current spectated player ✓
 
 show/hide depending on if the game has started.
 
