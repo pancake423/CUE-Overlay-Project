@@ -93,6 +93,8 @@ function init() {
 
 	UPDATE_OVERLAY();
 	initWebSocket();
+	hideSpecData();
+	hideOverlay();
 }
 function update(updateParameters) {
 	/*
@@ -170,10 +172,10 @@ function update(updateParameters) {
 			SPEC_PLAYER.boost.innerHTML = updateParameters['specboost'];
 			drawBoostMeter(parseInt(updateParameters['specboost']),SPEC_PLAYER.team);
 		},
-		'specshow': function() {INFO.spectating = updateParameters['specshow']},
+		'specshow': function() {INFO.spectating = updateParameters['specshow']; INFO.spectating ? showSpecData() : hideSpecData()},
 		'specteam': function() {SPEC_PLAYER.team = updateParameters['specteam']},
 		'specname': function() {SPEC_PLAYER.name.innerHTML = updateParameters['specname']},
-		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + (INFO.t1_games_won + INFO.t2_games_won + 1) + " | Best of " + INFO.series_length;}
+		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + (INFO.t1_games_won + INFO.t2_games_won + 1) + " | Best of " + INFO.series_length; showOverlay()}
 	};
 	const parameters = [
 		'timer',
@@ -262,7 +264,7 @@ function drawCardBoostMeter(ctx, amt, team) {
 	const cw = ctx.canvas.width = parseFloat(getComputedStyle(ctx.canvas).getPropertyValue('width'));
 	const ch = ctx.canvas.height = parseFloat(getComputedStyle(ctx.canvas).getPropertyValue('height'));
 	ctx.lineCap = "round";
-	ctx.strokeStyle = "#101010";
+	ctx.strokeStyle = "#555555";
 	ctx.clearRect(0, 0, cw, ch);
 	ctx.beginPath();
 	ctx.lineWidth = ch/2;
@@ -294,7 +296,7 @@ function drawTeam1Tickers(ts, ss) {
 		if (i >= length - ts) {
 			ctx.strokeStyle = TEAM_1_COLOR;
 		} else {
-			ctx.strokeStyle = "#101010";
+			ctx.strokeStyle = "#555555";
 		}
 		ctx.moveTo(cw / length * (i + 0.25), ch / 2);
 		ctx.lineTo(cw / length * (i + 0.75), ch / 2);
@@ -314,7 +316,7 @@ function drawTeam2Tickers(ts, ss) {
 		if (i < ts) {
 			ctx.strokeStyle = TEAM_2_COLOR;
 		} else {
-			ctx.strokeStyle = "#101010";
+			ctx.strokeStyle = "#555555";
 		}
 		ctx.moveTo(cw / length * (i + 0.25), ch / 2);
 		ctx.lineTo(cw / length * (i + 0.75), ch / 2);
@@ -403,6 +405,7 @@ function initWebSocket() {
 				t2ss: INFO.t2_games_won,
 
 			});
+			hidePlayerCards();
 			break;
 		case "game:round_started_go":
 			update({
@@ -416,6 +419,105 @@ function initWebSocket() {
 	}
 }
 
-
+function hideSpecData() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
+	const slideOffLeft = {
+		transform: "translate(0, 0)",
+		transform: "translate(-50vw, 0)"
+	}
+	const slideOffRight = {
+		transform: "translate(0, 0)",
+		transform: "translate(50vw, 0)"
+	}
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards'
+	}
+	document.getElementById("spectated-boost-meter").animate(slideOffRight, animationTiming);
+	//document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
+	document.getElementById("spectated-player-info").animate(slideOffLeft, animationTiming);
+	//document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
+}
+function showSpecData() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
+	const slideOffLeft = {
+		transform: "translate(-50vw, 0)",
+		transform: "translate(0, 0)",
+	}
+	const slideOffRight = {
+		transform: "translate(50vw, 0)",
+		transform: "translate(0, 0)",
+	}
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards',
+	}
+	document.getElementById("spectated-boost-meter").animate(slideOffRight, animationTiming);
+	//document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
+	document.getElementById("spectated-player-info").animate(slideOffLeft, animationTiming);
+	//document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
+}
+function hidePlayerCards() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
+	const slideOffLeft = {
+		transform: "translate(0, 0)",
+		transform: "translate(-50vw, 0)"
+	}
+	const slideOffRight = {
+		transform: "translate(0, 0)",
+		transform: "translate(50vw, 0)"
+	}
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards'
+	}
+	document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
+	document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
+}
+function hideOverlay() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
+	const slideUpSlight = [
+		{transform: "translate(0, 0)"},
+		{transform: "translate(0, -5vh)", zIndex: -1000}
+	]
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards'
+	}
+	document.getElementById("ingame-top-subbar").animate(slideUpSlight, animationTiming);
+	hidePlayerCards();
+}
+function showOverlay() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
+	const slideOffLeft = {
+		transform: "translate(-50vw, 0)",
+		transform: "translate(0, 0)",
+	}
+	const slideOffRight = {
+		transform: "translate(50vw, 0)",
+		transform: "translate(0, 0)",
+	}
+	const slideUpSlight = [
+		{transform: "translate(0, -5vh)", zIndex: -1000},
+		{transform: "translate(0, 0)"},
+	]
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards'
+	}
+	document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
+	document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
+	document.getElementById("ingame-top-subbar").animate(slideUpSlight, animationTiming);
+}
 //runs on page load
 window.onload = init;

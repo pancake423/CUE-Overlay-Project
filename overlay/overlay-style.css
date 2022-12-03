@@ -1,33 +1,34 @@
 :root {
-	/* top bar variables */
-	--timer-bg-color: #111;
+	/* top bar variables 
+	colors: rgb(23,27,26), rgb(16,16,16), rgb(50, 4, 4), rgb(115, 12, 13) rgb(55, 41, 41), rgb(89, 4, 32)
+	*/
+	--timer-bg-color: rgb(16,16,16);
 	--timer-text-color: white;
-	--timer-font-size: 4rem;
+	--timer-font-size: 3rem;
 
-	--name-bg-color: #333;
+	--name-bg-color: rgba(89, 4, 32, 0.8);
 	--name-text-color: white;
-	--name-font-size: 3rem;
+	--name-font-size: 2rem;
 
 	--top-bar-height: 7vh;
 
 	--t1-color: #0000ff;
 	--t2-color: #ff0000;
 	--score-text-color: white;
-	--score-font-size: 4rem;
+	--score-font-size: 3rem;
 
 	/*top sub-bar variables*/
-	--sub-bar-height: 5vh;
-	--sub-bar-bg-color: #222;
+	--sub-bar-height: 4vh;
+	--sub-bar-bg-color: rgb(23,27,26);
 	--sub-bar-text-color: white;
-	--sub-bar-font-size: 1.5rem;
+	--sub-bar-font-size: 1.25rem;
 
-	--ticker-bg-color: #555;
-	--ticker-empty-color: #111;
+	--ticker-bg-color: rgba(16,16,16, 0.8);
 
 	/*team boost meter variables*/
 	--bm-width: 10vw;
-	--bm-height: 20vh;
-	--bm-bg-color: #111;
+	--bm-height: 25vh;
+	--bm-bg-color: rgba(23,27,26,0.8);
 	--bm-text-color: white;
 	--bm-font-size: 1.5rem;
 	--bm-top-offset: 5vh;
@@ -35,52 +36,80 @@
 	/*Bottom info bar variables*/
 	--bb-width: 50vw;
 	--bb-height: 5vh;
-	--bb-bg-color: #111;
+	--bb-bg-color: rgba(89, 4, 32, 0.8);
 	--bb-text-color: white;
-	--bb-font-size: 2rem;
+	--bb-font-size: 1.5rem;
 
 	/*spectated player info variables*/
 	--info-width: 10vw;
 	--info-height: 30vh;
-	--info-bg-color: #111;
+	--info-bg-color: rgba(23,27,26, 0.8);
 	--label-font-size: 1.5rem;
-	--label-font-color: #555;
+	--label-font-color: lightgray;
 	--data-font-size: 2rem;
 	--data-font-color: white;
 	--boost-meter-size: 15vh;
-	--boost-meter-color: #111;
+	--boost-meter-color: rgba(23,27,26, 0.8);
 	--boost-ticker-color: white;
 	--boost-text-color: white;
 	--boost-font-size: 4rem;
+}
+
+@font-face {
+  font-family: "Azonix";
+  src: url("Azonix.otf");
+}
+@font-face {
+  font-family: "Edosz";
+  src: url("edosz.ttf");
 }
 
 body {
 	margin: 0;
 	background-color: black;
 	overflow: hidden;
+	filter: drop-shadow(0px 0px 5px white) sepia(15%) saturate(85%);
+	font-family: "Edosz";
 }
 p {
 	margin: 0;
 	text-align: center;
 	line-height: 1;
 }
-
+#t1-ticker-canvas {
+	border-bottom-left-radius: 1em;
+}
+#t2-ticker-canvas {
+	border-bottom-right-radius: 1em;
+}
+#t1name-div {
+	border-bottom-left-radius: 1em;
+	border-top-left-radius: 1em;
+}
+#t2name-div {
+	border-bottom-right-radius: 1em;
+	border-top-right-radius: 1em;
+}
 #ingame-top-bar {
+	margin-top: 1em;
 	display: flex;
 	justify-content: center;
 	width: 100vw;
 	height: var(--top-bar-height);
+	z-index: 10000;
 }
 #ingame-top-subbar {
 	display: flex;
 	justify-content: center;
 	width: 100vw;
 	height: var(--sub-bar-height);
+	z-index: -100;
 }
 #timer-div {
 	height: var(--top-bar-height);
 	width: calc(var(--top-bar-height) * 2);
 	background-color: var(--timer-bg-color);
+	z-index: 10000;
 }
 #t1score-div {
 	background-color: var(--t1-color);
@@ -97,6 +126,8 @@ p {
 	height: var(--sub-bar-height);
 	width: calc(var(--top-bar-height) * 3);
 	background-color: var(--sub-bar-bg-color);
+	border-radius: 0 0 0.5em 0.5em;
+	z-index: -100;
 }
 #current-game-info {
 	color: var(--sub-bar-text-color);
@@ -111,11 +142,14 @@ p {
 }
 #ingame-bottom-bar {
 	position: absolute;
-	bottom: 0;
+	bottom: 1em;
 	width: var(--bb-width);
 	height: var(--bb-height);
 	left: calc((100vw - var(--bb-width)) / 2);
 	background-color: var(--bb-bg-color);
+	background-image: linear-gradient(var(--bb-bg-color), var(--bb-bg-color)), url("graffiti-grayscaled.jpg");
+	background-position: 45% 36%;
+	border-radius: 1em;
 }
 #bottom-bar-content {
 	margin-top: calc((var(--bb-height) - var(--bb-font-size)) / 2);
@@ -125,11 +159,15 @@ p {
 #spectated-player-info {
 	width: var(--info-width);
 	height: var(--info-height);
+	background-image: linear-gradient(var(--info-bg-color), var(--info-bg-color)), url("graffiti-grayscaled.jpg");
+	background-position: 10% 94%;
+	background-size: 200%;
 	background-color: var(--info-bg-color);
 	position: absolute;
 	left: 5vh;
 	bottom: 5vh;
 	padding: 1em;
+	border-radius: 1em;
 }
 #player-stats-table {
 	width: 100%;
@@ -145,6 +183,8 @@ p {
 	bottom: 5vh;
 	padding: 1em;
 	border-radius: 50%;
+	background-image: linear-gradient(var(--boost-meter-color), var(--boost-meter-color)), url("graffiti-grayscaled.jpg");
+	background-position: 25% 25%;
 }
 #boost-top-ticker {
 	position: absolute;
@@ -211,12 +251,17 @@ p {
 }
 .name-div {
 	background-color: var(--name-bg-color);
-	width: 20vw;
+	background-image: linear-gradient(var(--name-bg-color), var(--name-bg-color)), url("graffiti-grayscaled.jpg");
+	background-size: 100%;
+	background-position: 83% 88%;
+	width: 25vw;
 	height: 100%;
+	z-index: 10000;
 }
 .score-div {
 	height: var(--top-bar-height);
 	width: var(--top-bar-height);
+	z-index: 10000;
 }
 
 .name {
@@ -233,15 +278,20 @@ p {
 	width: 20vw;
 	height: calc(var(--sub-bar-height) * 0.667);
 	background-color: var(--ticker-bg-color);
+	z-index: -100;
+	background-image: linear-gradient(var(--ticker-bg-color), var(--ticker-bg-color)), url("graffiti-grayscaled.jpg");
 }
 .player-card {
 	display: flex;
 	background-color: var(--bm-bg-color);
+	background-image: linear-gradient(var(--bm-bg-color), var(--bm-bg-color)), url("graffiti-grayscaled.jpg");
 	flex-direction: column;
 	justify-content: space-evenly;
 	align-items: center;
 	padding-left: 1em;
 	padding-right: 1em;
+	margin: 1em;
+	border-radius: 1em;
 }
 .card-name {
 	width: 100%;
