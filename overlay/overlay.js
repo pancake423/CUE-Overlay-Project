@@ -95,6 +95,7 @@ function init() {
 	initWebSocket();
 	hideSpecData();
 	hideOverlay();
+	hidePlayerCards();
 }
 function update(updateParameters) {
 	/*
@@ -175,7 +176,13 @@ function update(updateParameters) {
 		'specshow': function() {INFO.spectating = updateParameters['specshow']; INFO.spectating ? showSpecData() : hideSpecData()},
 		'specteam': function() {SPEC_PLAYER.team = updateParameters['specteam']},
 		'specname': function() {SPEC_PLAYER.name.innerHTML = updateParameters['specname']},
-		'gamestarted': function() {INFO.games_played++; INFO.game_desc.innerHTML = "Game " + (INFO.t1_games_won + INFO.t2_games_won + 1) + " | Best of " + INFO.series_length; showOverlay()}
+		'gamestarted': function() {
+			INFO.games_played++; INFO.game_desc.innerHTML = "Game " + (INFO.t1_games_won + INFO.t2_games_won + 1) + " | Best of " + INFO.series_length;
+			showPlayerCards();
+			 if(INFO.overlay_shown === false) {
+			 	showOverlay();
+			 }
+			}
 	};
 	const parameters = [
 		'timer',
@@ -457,9 +464,7 @@ function showSpecData() {
     	fill: 'forwards',
 	}
 	document.getElementById("spectated-boost-meter").animate(slideOffRight, animationTiming);
-	//document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
 	document.getElementById("spectated-player-info").animate(slideOffLeft, animationTiming);
-	//document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
 }
 function hidePlayerCards() {
 	/*hides data specific to a spectated player when no player is being spectated.*/
@@ -493,9 +498,8 @@ function hideOverlay() {
     	fill: 'forwards'
 	}
 	document.getElementById("ingame-top-subbar").animate(slideUpSlight, animationTiming);
-	hidePlayerCards();
 }
-function showOverlay() {
+function showPlayerCards() {
 	/*hides data specific to a spectated player when no player is being spectated.*/
 	const slideOffLeft = {
 		transform: "translate(-50vw, 0)",
@@ -505,6 +509,17 @@ function showOverlay() {
 		transform: "translate(50vw, 0)",
 		transform: "translate(0, 0)",
 	}
+	const animationTiming = {
+		duration: 500,
+		iterations: 1,
+		easing: 'ease-in-out',
+    	fill: 'forwards'
+	}
+	document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
+	document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
+}
+function showOverlay() {
+	/*hides data specific to a spectated player when no player is being spectated.*/
 	const slideUpSlight = [
 		{transform: "translate(0, -5vh)", zIndex: -1000},
 		{transform: "translate(0, 0)"},
@@ -515,8 +530,6 @@ function showOverlay() {
 		easing: 'ease-in-out',
     	fill: 'forwards'
 	}
-	document.getElementById("t2-boost-div").animate(slideOffRight, animationTiming);
-	document.getElementById("t1-boost-div").animate(slideOffLeft, animationTiming);
 	document.getElementById("ingame-top-subbar").animate(slideUpSlight, animationTiming);
 }
 //runs on page load
